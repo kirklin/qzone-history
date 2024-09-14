@@ -3,7 +3,7 @@
 ######################
 *.env
 app.db
-data
+qrcode.png
 
 # Binaries for programs and plugins
 *.exe
