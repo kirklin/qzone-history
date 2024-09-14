@@ -12,6 +12,8 @@ type UserRepository interface {
 	Save(ctx context.Context, user entity.User) error
 	// FindByQQ 通过QQ号查找用户
 	FindByQQ(ctx context.Context, qq string) (*entity.User, error)
+	// GetLastLoginUser 获取最后登录的用户
+	GetLastLoginUser(ctx context.Context) (*entity.User, error)
 	// Update 更新用户信息
 	Update(ctx context.Context, user entity.User) error
 	// UpdateLoginStatus 更新用户的登录状态

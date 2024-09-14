@@ -21,4 +21,10 @@ type ActivityUseCase interface {
 
 	// GetActivitiesByType 根据活动类型获取活动
 	GetActivitiesByType(ctx context.Context, activityType entity.ActivityType, limit, offset int) ([]entity.Activity, error)
+
+	// FetchActivities 从网页或其他接口获取全部活动
+	FetchActivities(ctx context.Context, user entity.User) ([]entity.Activity, error)
+
+	// FetchActivity 从网页或其他接口获取一条活动
+	FetchActivity(ctx context.Context, user entity.User, index int) (entity.Activity, error)
 }

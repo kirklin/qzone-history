@@ -1,0 +1,9 @@
+storage:
+  userPath: "./data/users"
+  messagePath: "./data/messages"
+  resultPath: "./data/results"
+
+qzoneAPI:
+  qrCodeURL: "https://ssl.ptlogin2.qq.com/ptqrshow?appid=549000912&e=2&l=M&s=3&d=72&v=4&t=0.8692955245720428&daid=5"
+  loginURL: "https://ssl.ptlogin2.qq.com/ptqrlogin"
+  messageURL: "https://user.qzone.qq.com/proxy/domain/ic2.qzone.qq.com/cgi-bin/feeds/feeds2_html_pav_all"
