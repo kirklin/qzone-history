@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/schollz/progressbar/v3"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"qzone-history/internal/domain/entity"
 	"qzone-history/internal/infrastructure/config"
@@ -64,7 +64,7 @@ func (c *qzoneAPIClient) GetLoginQRCode() ([]byte, string, error) {
 		}
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, "", fmt.Errorf("读取二维码数据失败: %w", err)
 	}
@@ -90,7 +90,7 @@ func (c *qzoneAPIClient) CheckLoginStatus(qrsig string) (entity.LoginStatus, str
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return entity.LoginStatusWaiting, "", fmt.Errorf("读取登录响应失败: %w", err)
 	}
@@ -173,7 +173,7 @@ func (c *qzoneAPIClient) GetUserInfo(cookies map[string]string) (*entity.User, e
 	}
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, fmt.Errorf("读取响应体失败: %w", err)
 	}
@@ -233,20 +233,27 @@ func (c *qzoneAPIClient) getActivityCount(cookies map[string]string) (int, error
 
 func (c *qzoneAPIClient) GetAllActivities(cookies map[string]string) ([]*entity.Activity, error) {
 	var allActivities []*entity.Activity
-	totalCount := 0
 	totalCount, err := c.getActivityCount(cookies)
 	if err != nil {
 		return nil, fmt.Errorf("获取活动总数失败: %w", err)
 	}
+
+	bar := progressbar.Default(int64(totalCount), "正在获取活动")
+
 	for i := 0; i <= totalCount/100; i++ {
 		activities, err := c.GetActivities(cookies, i*100, 100)
 		if err != nil {
 			return nil, fmt.Errorf("获取活动失败 (offset %d): %w", i*100, err)
 		}
 		allActivities = append(allActivities, activities...)
+
+		// 更新进度条
+		bar.Add(len(activities))
+
 		time.Sleep(200 * time.Millisecond)
 	}
 
+	fmt.Println("\n获取完成!")
 	return allActivities, nil
 }
 
