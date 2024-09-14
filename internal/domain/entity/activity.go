@@ -21,7 +21,7 @@ type Activity struct {
 type ActivityType int
 
 const (
-	TypeStatus ActivityType = iota
+	TypeMoment ActivityType = iota
 	TypeForward
 	TypeLike
 	TypeComment

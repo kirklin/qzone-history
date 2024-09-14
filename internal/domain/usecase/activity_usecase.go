@@ -26,5 +26,5 @@ type ActivityUseCase interface {
 	FetchActivities(ctx context.Context, user entity.User) ([]entity.Activity, error)
 
 	// FetchActivity 从网页或其他接口获取一条活动
-	FetchActivity(ctx context.Context, user entity.User, index int) (entity.Activity, error)
+	FetchActivity(ctx context.Context, user entity.User, offset int) (entity.Activity, error)
 }

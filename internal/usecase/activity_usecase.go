@@ -2,17 +2,21 @@ package usecase
 
 import (
 	"context"
+	"fmt"
 	"qzone-history/internal/domain/entity"
 	"qzone-history/internal/domain/repository"
 	"qzone-history/internal/domain/usecase"
+	"qzone-history/internal/infrastructure/qzone_api"
 )
 
 type activityUseCase struct {
+	qzoneAPI     qzone_api.QzoneAPIClient
 	activityRepo repository.ActivityRepository
 }
 
-func NewActivityUseCase(activityRepo repository.ActivityRepository) usecase.ActivityUseCase {
+func NewActivityUseCase(qzoneAPI qzone_api.QzoneAPIClient, activityRepo repository.ActivityRepository) usecase.ActivityUseCase {
 	return &activityUseCase{
+		qzoneAPI:     qzoneAPI,
 		activityRepo: activityRepo,
 	}
 }
@@ -42,6 +46,37 @@ func (a *activityUseCase) GetActivitiesByType(ctx context.Context, activityType 
 }
 
 func (a *activityUseCase) FetchActivities(ctx context.Context, user entity.User) ([]entity.Activity, error) {
-	//TODO implement me
-	panic("implement me")
+	// 分页获取所有活动
+	activitiesPtr, err := a.qzoneAPI.GetAllActivities(user.Cookies)
+	if err != nil {
+		return nil, fmt.Errorf("获取所有活动失败: %w", err)
+	}
+
+	activities := make([]entity.Activity, len(activitiesPtr))
+	// 保存到数据库
+	err = a.activityRepo.BatchImport(ctx, activities)
+	if err != nil {
+		return nil, fmt.Errorf("保存活动失败: %w", err)
+	}
+
+	return activities, nil
+}
+
+func (a *activityUseCase) FetchActivity(ctx context.Context, user entity.User, offset int) (entity.Activity, error) {
+	activitiesPtr, err := a.qzoneAPI.GetActivities(user.Cookies, offset, 1)
+	if err != nil {
+		return entity.Activity{}, fmt.Errorf("获取活动失败: %w", err)
+	}
+	activities := make([]entity.Activity, len(activitiesPtr))
+	if len(activities) == 0 {
+		return entity.Activity{}, fmt.Errorf("未找到活动")
+	}
+	activity := activities[0]
+	// 保存到数据库
+	err = a.activityRepo.Insert(ctx, activity)
+	if err != nil {
+		return entity.Activity{}, fmt.Errorf("保存活动失败: %w", err)
+	}
+
+	return activity, nil
 }
