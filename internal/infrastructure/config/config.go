@@ -5,10 +5,14 @@ import (
 )
 
 type Config struct {
-	Storage struct {
-		UserPath    string
-		MessagePath string
-		ResultPath  string
+	Database struct {
+		Type     string // 数据库类型，例如 "sqlite", "postgres", "mysql"
+		Host     string
+		Port     int
+		User     string
+		Password string
+		DBName   string
+		SSLMode  string
 	}
 	QzoneAPI struct {
 		QRCodeURL  string

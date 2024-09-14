@@ -1,8 +1,11 @@
-storage:
-  userPath: "./data/users"
-  messagePath: "./data/messages"
-  resultPath: "./data/results"
-
+database:
+  type: "sqlite"  # 当前使用 SQLite，可以改为 "postgres" 或 "mysql"
+  host: "localhost"  # 对其他数据库（如 PostgreSQL 或 MySQL）使用
+  port: 5432         # 例如 PostgreSQL 默认端口
+  user: "your_db_user"
+  password: "your_db_password"
+  dbName: "./app.db"
+  sslMode: "disable"  # PostgreSQL 可选配置
 qzoneAPI:
   qrCodeURL: "https://ssl.ptlogin2.qq.com/ptqrshow?appid=549000912&e=2&l=M&s=3&d=72&v=4&t=0.8692955245720428&daid=5"
   loginURL: "https://ssl.ptlogin2.qq.com/ptqrlogin"
