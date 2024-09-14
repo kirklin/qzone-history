@@ -18,7 +18,7 @@ type AuthUseCase interface {
 
 	// CheckQRCodeLoginStatus 检查二维码登录状态
 	// 返回登录状态和可能的错误
-	CheckQRCodeLoginStatus(ctx context.Context, qrsig string) (entity.LoginStatus, error)
+	CheckQRCodeLoginStatus(ctx context.Context, qrsig string) (entity.LoginStatus, string, error)
 
 	// CompleteLogin 完成登录过程
 	// 参数 loginResponse 是从 QQ 服务器返回的登录成功响应

@@ -54,6 +54,7 @@ func (a *activityUseCase) FetchActivities(ctx context.Context, user entity.User)
 
 	activities := make([]entity.Activity, len(activitiesPtr))
 	// 保存到数据库
+	// TODO 有可能因为数量过多报错
 	err = a.activityRepo.BatchImport(ctx, activities)
 	if err != nil {
 		return nil, fmt.Errorf("保存活动失败: %w", err)

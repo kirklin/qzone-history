@@ -60,9 +60,9 @@ func (a *authUseCase) GetLoginQRCode(ctx context.Context) ([]byte, string, error
 	return a.qzoneAPI.GetLoginQRCode()
 }
 
-func (a *authUseCase) CheckQRCodeLoginStatus(ctx context.Context, qrsig string) (entity.LoginStatus, error) {
-	status, _, err := a.qzoneAPI.CheckLoginStatus(qrsig)
-	return status, err
+func (a *authUseCase) CheckQRCodeLoginStatus(ctx context.Context, qrsig string) (entity.LoginStatus, string, error) {
+	status, responseText, err := a.qzoneAPI.CheckLoginStatus(qrsig)
+	return status, responseText, err
 }
 
 func (a *authUseCase) CompleteLogin(ctx context.Context, loginResponse string) (*entity.User, error) {
@@ -82,9 +82,10 @@ func (a *authUseCase) CompleteLogin(ctx context.Context, loginResponse string) (
 		AvatarURL:       userInfo.AvatarURL,
 		Cookies:         cookies,
 		LoginExpireTime: time.Now().Add(24 * time.Hour), // 设置登录过期时间，这里假设为24小时
+		LoginStatus:     entity.LoginStatusSuccess,
 	}
 
-	err = a.userRepo.Save(ctx, *user)
+	err = a.userRepo.Update(ctx, *user)
 	if err != nil {
 		return nil, fmt.Errorf("保存用户信息失败: %w", err)
 	}
