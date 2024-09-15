@@ -77,6 +77,7 @@ func (a *App) Run(ctx context.Context) error {
 					fmt.Println("二维码认证中")
 				case entity.LoginStatusExpired:
 					return fmt.Errorf("二维码已失效")
+				default:
 				}
 			}
 

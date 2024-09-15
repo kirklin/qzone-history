@@ -16,11 +16,12 @@ func NewActivityRepository(db database.Database) repository.ActivityRepository {
 }
 
 func (r *activityRepository) BatchImport(ctx context.Context, activities []entity.Activity) error {
-	return r.db.DB().WithContext(ctx).Create(&activities).Error
+	//return r.db.DB().WithContext(ctx).CreateInBatches(&activities, 100).Error
+	return r.db.DB().WithContext(ctx).Save(&activities).Error
 }
 
 func (r *activityRepository) Insert(ctx context.Context, activity entity.Activity) error {
-	return r.db.DB().WithContext(ctx).Create(&activity).Error
+	return r.db.DB().WithContext(ctx).Save(&activity).Error
 }
 
 func (r *activityRepository) FindByUserQQ(ctx context.Context, userQQ string, limit, offset int) ([]entity.Activity, error) {

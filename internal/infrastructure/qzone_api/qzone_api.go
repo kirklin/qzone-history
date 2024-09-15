@@ -310,7 +310,7 @@ func (c *qzoneAPIClient) GetActivities(cookies map[string]string, offset, count 
 	// 遍历每个活动条目
 	doc.Find("li.f-single.f-s-s").Each(func(i int, s *goquery.Selection) {
 		activity := &entity.Activity{}
-
+		activity.ReceiverQQ = uin
 		// 提取发送者的信息（昵称、QQ号、链接）
 		senderElement := s.Find("a.f-name.q_namecard")
 		if senderElement.Length() > 0 {
