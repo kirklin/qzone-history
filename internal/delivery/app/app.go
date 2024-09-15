@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"qzone-history/internal/domain/entity"
 	"qzone-history/internal/domain/usecase"
 	"qzone-history/pkg/qrcode"
@@ -40,79 +40,89 @@ func NewApp(
 }
 
 func (a *App) Run(ctx context.Context) error {
-	// 检查本地登录状态
+	log.Println("开始检查本地登录状态...")
 	user, loggedIn, err := a.authUseCase.CheckLocalLoginStatus(ctx)
-	//if err != nil {
-	//	return fmt.Errorf("failed to check local login status: %w", err)
-	//}
-	var responseText string
+	if err != nil {
+		_ = logError("检查本地登录状态失败", err)
+	}
+
 	if !loggedIn {
-		// 获取登录二维码
+		log.Println("本地未登录，获取登录二维码...")
 		qrCode, qrsig, err := a.authUseCase.GetLoginQRCode(ctx)
 		if err != nil {
-			return fmt.Errorf("failed to get login QR code: %w", err)
+			return logError("获取登录二维码失败", err)
 		}
 
-		// 显示二维码
-		err = qrcode.SaveAndDisplayQRCode(qrCode)
+		log.Println("保存并显示二维码...")
+		qrPath, err := qrcode.SaveQRCode(qrCode)
 		if err != nil {
-			return err
+			return logError("保存和显示二维码失败", err)
 		}
+		// 打印二维码路径
+		log.Printf("二维码已保存至 %s，请使用手机QQ扫描登录\n", qrPath)
+		log.Println("等待用户扫描二维码...")
 
-		// 等待用户扫描二维码
-		for {
+		loginSuccess := false
+		for !loginSuccess {
 			status, res, err := a.authUseCase.CheckQRCodeLoginStatus(ctx, qrsig)
 			if err != nil {
-				return fmt.Errorf("failed to check QR code login status: %w", err)
+				return logError("检查二维码登录状态失败", err)
 			}
 
-			if status == entity.LoginStatusSuccess {
-				responseText = res
-				break
-			} else {
-				switch status {
-				case entity.LoginStatusWaiting:
-					fmt.Println("等待扫描二维码")
-				case entity.LoginStatusScanning:
-					fmt.Println("二维码认证中")
-				case entity.LoginStatusExpired:
-					return fmt.Errorf("二维码已失效")
-				default:
+			switch status {
+			case entity.LoginStatusSuccess:
+				log.Println("二维码扫描成功，完成登录过程...")
+				user, err = a.authUseCase.CompleteLogin(ctx, res)
+				if err != nil {
+					return logError("完成登录失败", err)
 				}
+				loginSuccess = true
+			case entity.LoginStatusWaiting:
+				// log.Println("等待扫描二维码")
+			case entity.LoginStatusScanning:
+				log.Println("二维码认证中")
+			case entity.LoginStatusExpired:
+				return logError("二维码已失效", nil)
+			default:
+				log.Println("未知二维码状态")
 			}
 
-			// 等待一段时间后再次检查
-			time.Sleep(2 * time.Second)
-		}
-
-		// 完成登录过程
-		user, err = a.authUseCase.CompleteLogin(ctx, responseText)
-		if err != nil {
-			return fmt.Errorf("failed to complete login: %w", err)
+			if !loginSuccess {
+				time.Sleep(2 * time.Second)
+			}
 		}
 	}
-	// 获取活动记录
+
+	log.Println("登录成功，获取活动记录...")
 	_, err = a.activityUseCase.FetchActivities(ctx, *user)
 	if err != nil {
-		return fmt.Errorf("failed to fetch activities: %w", err)
+		return logError("获取活动记录失败", err)
 	}
-	// 开始数据重建过程
+
+	log.Println("开始数据重建过程...")
 	err = a.reconstructionUseCase.ReconstructMomentsFromActivities(ctx, user.QQ)
 	if err != nil {
-		return fmt.Errorf("failed to reconstruct moments: %w", err)
+		return logError("重建 Moments 失败", err)
 	}
 
 	err = a.reconstructionUseCase.ReconstructBoardMessagesFromActivities(ctx, user.QQ)
 	if err != nil {
-		return fmt.Errorf("failed to reconstruct board messages: %w", err)
+		return logError("重建留言板失败", err)
 	}
 
-	// 导出用户数据
+	log.Println("导出用户数据到 JSON 格式...")
 	err = a.exportUseCase.ExportUserDataToJSON(ctx, user.QQ)
 	if err != nil {
-		return fmt.Errorf("failed to export user data to JSON: %w", err)
+		return logError("导出用户数据到 JSON 失败", err)
 	}
 
-	fmt.Println("Application completed successfully")
+	log.Println("应用程序成功完成")
 	return nil
+}
+
+func logError(message string, err error) error {
+	if err != nil {
+		log.Printf("%s: %v", message, err)
+	}
+	return err
 }
