@@ -32,8 +32,8 @@ func NewExportUseCase(
 
 func (u *exportUseCase) ExportUserDataToJSON(ctx context.Context, userQQ string) error {
 	// 获取用户数据
-	moments, _ := u.momentRepo.FindByUserQQ(ctx, userQQ, 1000, 0)
-	boardMessages, _ := u.boardMessageRepo.FindByUserQQ(ctx, userQQ, 1000, 0)
+	moments, _ := u.momentRepo.FindByUserQQ(ctx, userQQ, -1, 0)
+	boardMessages, _ := u.boardMessageRepo.FindByUserQQ(ctx, userQQ, -1, 0)
 	friends, _ := u.friendRepo.FindFriendsByUserQQ(ctx, userQQ)
 
 	// 创建导出数据结构

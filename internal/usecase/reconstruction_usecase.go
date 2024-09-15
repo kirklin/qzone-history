@@ -40,7 +40,8 @@ func (u *reconstructionUseCase) ReconstructMomentsFromActivities(ctx context.Con
 		if !ok {
 			moment = &entity.Moment{
 				ID:              momentKey,
-				UserQQ:          activity.SenderQQ,
+				SenderQQ:        activity.SenderQQ,
+				UserQQ:          activity.ReceiverQQ,
 				Content:         activity.Content,
 				Timestamp:       activity.Timestamp,
 				TimeText:        activity.TimeText,
@@ -113,8 +114,11 @@ func (u *reconstructionUseCase) ReconstructBoardMessagesFromActivities(ctx conte
 
 	for _, activity := range activities {
 		if activity.Type == entity.TypeBoardMessage {
-			// 根据活动记录重建BoardMessage
 			boardMessage := reconstructBoardMessageFromActivity(activity)
+
+			// 生成 ID
+			_ = boardMessage.BeforeCreate(nil)
+
 			if err := u.boardMessageRepo.Insert(ctx, boardMessage); err != nil {
 				return err
 			}

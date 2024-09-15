@@ -10,7 +10,8 @@ import (
 // Moment 表示QQ空间说说
 type Moment struct {
 	ID              string    `json:"id" gorm:"primaryKey"`                // 说说ID
-	UserQQ          string    `json:"userQQ" gorm:"index"`                 // 发布者QQ
+	UserQQ          string    `json:"userQQ" gorm:"index"`                 // 说说所有者QQ
+	SenderQQ        string    `json:"senderQQ" gorm:"index"`               // 发送者QQ
 	Content         string    `json:"content"`                             // 说说内容
 	Timestamp       time.Time `json:"timestamp"`                           // 发布时间戳
 	TimeText        string    `json:"timeText"`                            // 发布时间文本
