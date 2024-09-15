@@ -15,7 +15,7 @@ type Moment struct {
 	Content         string    `json:"content"`                             // 说说内容
 	Timestamp       time.Time `json:"timestamp"`                           // 发布时间戳
 	TimeText        string    `json:"timeText"`                            // 发布时间文本
-	ImageURLs       []string  `json:"imageURLs" gorm:"type:text"`          // 图片URL列表
+	ImageURLs       []string  `json:"imageURLs" gorm:"serializer:json"`    // 图片URL列表
 	Likes           int       `json:"likes"`                               // 点赞数
 	Comments        []Comment `json:"comments" gorm:"foreignKey:MomentID"` // 评论列表
 	Views           int       `json:"views"`                               // 浏览次数
