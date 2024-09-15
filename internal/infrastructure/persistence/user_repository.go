@@ -16,7 +16,7 @@ func NewUserRepository(db database.Database) repository.UserRepository {
 }
 
 func (r *userRepository) Save(ctx context.Context, user entity.User) error {
-	return r.db.DB().WithContext(ctx).Create(&user).Error
+	return r.db.DB().WithContext(ctx).Save(&user).Error
 }
 
 func (r *userRepository) FindByQQ(ctx context.Context, qq string) (*entity.User, error) {

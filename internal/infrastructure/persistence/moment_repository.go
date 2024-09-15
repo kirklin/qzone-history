@@ -24,6 +24,10 @@ func (r *momentRepository) Insert(ctx context.Context, moment entity.Moment) err
 	return r.db.DB().WithContext(ctx).Create(&moment).Error
 }
 
+func (r *momentRepository) UpsertMoment(ctx context.Context, moment entity.Moment) error {
+	return r.db.DB().WithContext(ctx).Save(&moment).Error
+}
+
 func (r *momentRepository) FindByUserQQ(ctx context.Context, userQQ string, limit, offset int) ([]entity.Moment, error) {
 	var moments []entity.Moment
 	err := r.db.DB().WithContext(ctx).Where("user_qq = ?", userQQ).Limit(limit).Offset(offset).Find(&moments).Error

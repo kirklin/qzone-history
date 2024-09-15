@@ -16,11 +16,11 @@ func NewFriendRepository(db database.Database) repository.FriendRepository {
 }
 
 func (r *friendRepository) BatchImport(ctx context.Context, friends []entity.Friend) error {
-	return r.db.DB().WithContext(ctx).Create(&friends).Error
+	return r.db.DB().WithContext(ctx).Save(&friends).Error
 }
 
 func (r *friendRepository) Insert(ctx context.Context, friend entity.Friend) error {
-	return r.db.DB().WithContext(ctx).Create(&friend).Error
+	return r.db.DB().WithContext(ctx).Save(&friend).Error
 }
 
 func (r *friendRepository) FindFriendsByUserQQ(ctx context.Context, userQQ string) ([]entity.Friend, error) {

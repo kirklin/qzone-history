@@ -25,5 +25,7 @@ const (
 	TypeLike                             // 点赞
 	TypeComment                          // 评论
 	TypeBoardMessage                     // 留言
+	TypeReply                            // 回复
+	TypeView                             //查看
 	TypeOther                            // 其他
 )

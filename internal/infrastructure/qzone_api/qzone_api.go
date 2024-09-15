@@ -348,10 +348,14 @@ func (c *qzoneAPIClient) GetActivities(cookies map[string]string, offset, count 
 		switch {
 		case strings.Contains(stateText, "赞了我的说说"):
 			activity.Type = entity.TypeLike
+		case strings.Contains(stateText, "查看了我的说说"):
+			activity.Type = entity.TypeView
 		case strings.Contains(stateText, "评论"):
 			activity.Type = entity.TypeComment
 		case strings.Contains(stateText, "留言"):
 			activity.Type = entity.TypeBoardMessage
+		case strings.Contains(stateText, "回复"):
+			activity.Type = entity.TypeReply
 		case s.Find("div.f-reprint").Length() > 0:
 			activity.Type = entity.TypeForward
 			// 提取转发内容

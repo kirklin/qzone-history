@@ -4,6 +4,7 @@ go 1.23.0
 
 require (
 	github.com/PuerkitoBio/goquery v1.10.0
+	github.com/google/uuid v1.6.0
 	github.com/mdp/qrterminal/v3 v3.2.0
 	github.com/schollz/progressbar/v3 v3.14.6
 	github.com/spf13/viper v1.7.1

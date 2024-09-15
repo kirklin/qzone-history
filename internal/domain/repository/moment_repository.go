@@ -9,6 +9,7 @@ import (
 type MomentRepository interface {
 	BatchImport(ctx context.Context, moments []entity.Moment) error
 	Insert(ctx context.Context, moment entity.Moment) error
+	UpsertMoment(ctx context.Context, moment entity.Moment) error
 	FindByUserQQ(ctx context.Context, userQQ string, limit, offset int) ([]entity.Moment, error)
 	AddLike(ctx context.Context, momentID string) error
 	AddComment(ctx context.Context, comment entity.Comment) error

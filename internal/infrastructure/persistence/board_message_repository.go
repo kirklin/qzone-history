@@ -16,11 +16,11 @@ func NewBoardMessageRepository(db database.Database) repository.BoardMessageRepo
 }
 
 func (r *boardMessageRepository) BatchImport(ctx context.Context, messages []entity.BoardMessage) error {
-	return r.db.DB().WithContext(ctx).Create(&messages).Error
+	return r.db.DB().WithContext(ctx).Save(&messages).Error
 }
 
 func (r *boardMessageRepository) Insert(ctx context.Context, message entity.BoardMessage) error {
-	return r.db.DB().WithContext(ctx).Create(&message).Error
+	return r.db.DB().WithContext(ctx).Save(&message).Error
 }
 
 func (r *boardMessageRepository) FindByUserQQ(ctx context.Context, userQQ string, limit, offset int) ([]entity.BoardMessage, error) {
