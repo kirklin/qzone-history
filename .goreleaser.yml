@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
+project_name: qzone-history
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - goos:
+      - windows
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    main: ./cmd/main.go
+    ldflags: "-s -w -X version.Version={{.Version}}"
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+release:
+  github:
+    owner: kirklin
+    name: qzone-history
