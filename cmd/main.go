@@ -10,10 +10,14 @@ import (
 	"qzone-history/internal/usecase"
 	"qzone-history/pkg/database"
 	"qzone-history/pkg/database/sqlite"
+	"qzone-history/version"
 )
 
 func main() {
 	ctx := context.Background()
+
+	// 打印当前版本号（中文显示）
+	log.Printf("qzone-history 当前版本号: %s\n", version.Version)
 
 	// 加载配置
 	log.Println("加载配置文件...")
