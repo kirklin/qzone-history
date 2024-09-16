@@ -33,7 +33,7 @@ jobs:
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o qzone-history-${{ matrix.goos }}-${{ matrix.goarch }} cmd/main.go
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: qzone-history-${{ matrix.goos }}-${{ matrix.goarch }}
           path: qzone-history-${{ matrix.goos }}-${{ matrix.goarch }}
@@ -47,13 +47,13 @@ jobs:
           fetch-depth: 0
 
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: ./artifacts
 
       - name: Create GitHub Release for qzone-history
         uses: softprops/action-gh-release@v1
         with:
-          files: ./artifacts/*
+          files: ./artifacts/**/*  # 选择所有已下载的二进制文件
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
