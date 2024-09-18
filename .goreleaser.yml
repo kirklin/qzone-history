@@ -1,5 +1,5 @@
-# yaml-language-server: $schema=https://goreleaser.com/static/schema-pro.json
 project_name: qzone-history
+
 before:
   hooks:
     - go mod tidy
@@ -13,11 +13,46 @@ builds:
       - amd64
       - arm64
     main: ./cmd/main.go
+    env:
+      - CGO_ENABLED=0
     ldflags: "-s -w -X version.Version={{.Version}}"
+
 archives:
-  - format: tar.gz
+  - format: zip
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
 release:
   github:
     owner: kirklin
     name: qzone-history
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^test:"
+      - "^chore"
+      - "merge conflict"
+      - Merge pull request
+      - Merge remote-tracking branch
+      - Merge branch
+      - go mod tidy
+  groups:
+    - title: "New Features"
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 100
+    - title: "Bug fixes"
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 200
+    - title: "Dependency updates"
+      regexp: "^.*chore\\(deps\\)*:+.*$"
+      order: 300
+    - title: "Documentation updates"
+      regexp: "^.*docs[(\\w)]*:+.*$"
+      order: 400
+    - title: "Other work"
+      order: 9999
+
+announce:
+  skip: "{{gt .Patch 0}}"
